@@ -103,7 +103,7 @@ def train(epoch):
         optimizer.step()
         print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
-                100. * batch_idx / len(train_loader), loss.data[0]))
+                100. * batch_idx / len(train_loader), loss.item()))
 
 #Testing function
 def test(epoch):
@@ -113,11 +113,11 @@ def test(epoch):
     for batch_idx, (data, target) in enumerate(test_loader):
         if args.cuda:
             data, target = data.to(device), target.to(device)
-	with torch.no_grad():
-        	output = model(data)
-        test_loss += Loss(output, target).data[0]
-        pred = output.data.max(1)[1] # get the index of the max log-probability
-        correct += pred.eq(target.data).cpu().sum()
+        with torch.no_grad():
+            output = model(data)
+            test_loss += Loss(output, target).item()
+            pred = output.data.max(1)[1] # get the index of the max log-probability
+            correct += pred.eq(target.data).cpu().sum()
 
     test_loss = test_loss
     test_loss /= len(test_loader) # loss function already averages over batch size
